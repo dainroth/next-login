@@ -10,7 +10,7 @@ export default function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -40,12 +40,16 @@ export default function LoginForm() {
 
 useEffect(() => {
   const token = localStorage.getItem("token");
-  if (!token) {
-    router.push("/login");
+  if (token) {
+    router.push("/dashboard");
   } else {
     setLoading(false);
   }
 }, [router]);
+
+  if (loading) {
+    return null; // or a spinner if you prefer
+  }
 
 
   return (
