@@ -1,14 +1,26 @@
-import pool from "@/lib/db";
+import pool from "../../../../lib/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";  //creates a JWT token for authentication
 
 const JWT_SECRET = process.env.JWT_SECRET; // jwt secret is a key used to sign and verify jwt tokens
 
 // handle login requests
-export async function POST (req){
-    const {username, password} = await req.json(); // This function runs when someone calls POST /api/auth/login
+export async function POST (req: Request){
 
-    // look up for user in the db, if not match it will store the user
+
+if (!pool) {
+  throw new Error("No pool ");
+}
+
+   let body;
+  try {
+    body = await req.json();
+  } catch (err) {
+    return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400 });
+  }
+
+  const { username, password } = body;
+// look up for user in the db, if not match it will store the user
     const result = await pool.query(
         "SELECT * FROM users WHERE username = $1",
         [username]
@@ -34,7 +46,6 @@ export async function POST (req){
         JWT_SECRET,
         {expiresIn: "1h"}
     );
-    
     
     return new Response(JSON.stringify({ token }), { status: 200 });
     // Sends the token back to the client.

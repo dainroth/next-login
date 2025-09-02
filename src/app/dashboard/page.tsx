@@ -6,13 +6,14 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/src/components/ui/button";
+
 
 export default function Dashboard() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);   
   useEffect(() => {
-    const isAuthenticated = localStorage.getItem("isAuthenticated");
+    const isAuthenticated = localStorage.getItem("token");
     if (!isAuthenticated) {
       router.push("/login");
     }else{
@@ -21,7 +22,7 @@ export default function Dashboard() {
   }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("token");
     router.push("/login");
   };
 
