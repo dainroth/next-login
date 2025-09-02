@@ -27,13 +27,17 @@ if (!pool) {
     );
 
     const user = result.rows[0];
+    console.log(user);
+
+
+
     if(!user){
-        return new Response (JSON.stringify({ error: "Invalid username or password"}), { status: 401});
+        return new Response (JSON.stringify({ error: "User not found"}), { status: 401});
     }
     // compare the provided password with the stored hashed password using bcrypt
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if(!isPasswordMatch){
-        return new Response (JSON.stringify({ error: "Invalid username or password"}), { status: 401});
+        return new Response (JSON.stringify({ error: "Invalid password"}), { status: 401});
     }
 
      if (!JWT_SECRET) {
