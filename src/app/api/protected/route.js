@@ -1,3 +1,6 @@
-export async function GET() {
-  return new Response(JSON.stringify({ message: "You are authorized!" }), { status: 200 });
-}
+const token = localStorage.getItem("token");
+const res = await fetch("/api/protected", {
+  headers: {
+    "Authorization": `Bearer ${token}`,
+  },
+});
