@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -10,40 +10,18 @@ export default function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
 
-  // we use local storage to store or check if the user is authorized or not
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
 
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Invalid username or password");
-      }
-
-      const data = await res.json();
-      // Save JWT token
-      localStorage.setItem("token", data.token);
+    // Simple validation example (replace with real logic)
+    if (username === "admin" && password === "password") {
+      localStorage.setItem("isAuthenticated", "true");
       router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Login failed");
+    } else {
+      setError("Invalid username or password");
     }
   };
-  useEffect(() => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    router.push("/login");
-  } else {
-    setLoading(false);
-  }
-}, [router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
