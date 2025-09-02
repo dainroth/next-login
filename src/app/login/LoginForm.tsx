@@ -4,38 +4,44 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-
+import axios from 'axios';
 export default function LoginForm() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+ 
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError("");
+
   try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
+    const res = await axios.post(
+      "/api/auth/login",
+      { username, password },
+      {
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (!res.ok) {
-        //console.log(res);
-        throw new Error("Invalid username or password");
       }
+    );
 
-      const data = await res.json();
-      // Save JWT token
-      localStorage.setItem("token", data.token);
-      router.push("/dashboard");
+    // Axios auto-parses JSON
+    const data = res.data;
+
+    // Save JWT token
+    localStorage.setItem("token", data.token);
+    router.push("/dashboard");
   } catch (err: any) {
-      console.log(err);
-      setError(err.message || "Login failed");
-    } 
+    if (axios.isAxiosError(err)) {
+      // If backend returned an error response
+      setError(err.response?.data?.error || "Login failed");
+    } else {
+      setError("Unexpected error occurred");
+    }
+  }
+};
 
-  };
 
 
 useEffect(() => {
